@@ -23,8 +23,8 @@ export function DistributeDialog({ open, onOpenChange }: { open: boolean; onOpen
     setValues(next);
   };
   const confirm = () => {
-    if (total <= 0) return toast.error("Informe ao menos um valor para distribuir.");
-    if (over) return toast.error("O total ultrapassa o dinheiro não distribuído.");
+    if (total <= 0) { toast.error("Informe ao menos um valor para distribuir."); return; }
+    if (over) { toast.error("O total ultrapassa o dinheiro não distribuído."); return; }
     setPots((ps) => ps.map((p) => ({ ...p, reserved: p.reserved + (parseBRL(values[p.id] ?? "") || 0) })));
     addTransaction({ type: "distribuicao", amount: total, date: "2026-11-17", description: "Distribuição entre potes" });
     toast.success(`${formatBRL(total)} distribuídos entre os potes`);

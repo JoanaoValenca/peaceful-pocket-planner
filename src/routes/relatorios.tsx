@@ -27,9 +27,9 @@ function ReportsPage() {
   const totals = data.reduce((a, m) => ({ r: a.r + m.receitas, d: a.d + m.despesas, n: a.n + m.necessidade, i: a.i + m.impulso }), { r: 0, d: 0, n: 0, i: 0 });
   const potSpend = pots.map((p) => ({ name: p.name, value: p.spent, color: p.color })).filter((p) => p.value > 0);
   // Demonstrative impulse share per pot.
-  const byPot = pots.filter((p) => p.spent > 0).map((p, i) => { const imp = Math.round(p.spent * [0.12, 0.05, 0.6, 0.08, 0.7, 0.1, 0.45, 0][i % 8]); return { pot: p.name, necessidade: p.spent - imp, impulso: imp }; });
+  const byPot = pots.filter((p) => p.spent > 0).map((p, i) => { const imp = Math.round(p.spent * ([0.12, 0.05, 0.6, 0.08, 0.7, 0.1, 0.45, 0][i % 8] ?? 0)); return { pot: p.name, necessidade: p.spent - imp, impulso: imp }; });
   const shown = potFilter === "todos" ? pots : pots.filter((p) => p.id === potFilter);
-  const prev = monthlyHistory[monthlyHistory.length - 2], cur = monthlyHistory[monthlyHistory.length - 1];
+  const prev = monthlyHistory[monthlyHistory.length - 2]!, cur = monthlyHistory[monthlyHistory.length - 1]!;
 
   return (
     <>

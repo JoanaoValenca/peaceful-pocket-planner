@@ -127,7 +127,7 @@ function ReserveForm({ open, reserve, onClose, onSave }: { open: boolean; reserv
   const eligible = accounts.filter((a) => a.active && a.use === (f.location === "virtual" ? "cotidiano" : "reserva"));
   const save = () => {
     const target = parseBRL(f.target);
-    if (!f.name.trim() || !target || !f.accountId) return toast.error("Preencha nome, meta e conta.");
+    if (!f.name.trim() || !target || !f.accountId) { toast.error("Preencha nome, meta e conta."); return; }
     onSave({ id: reserve?.id ?? `res-${Date.now()}`, amount: reserve?.amount ?? 0, name: f.name, goal: f.goal, target, dueDate: f.dueDate || undefined, location: f.location, accountId: f.accountId });
   };
   return (

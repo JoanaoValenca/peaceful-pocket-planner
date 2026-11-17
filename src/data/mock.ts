@@ -63,7 +63,7 @@ export const fixedExpenses: FixedExpense[] = [
 ];
 
 const buildInstallments = (count: number, amount: number, firstDue: string, paid: number): Installment[] => {
-  const [y, m, d] = firstDue.split("-").map(Number);
+  const [y = 2026, m = 1, d = 1] = firstDue.split("-").map(Number);
   return Array.from({ length: count }, (_, i) => {
     const date = new Date(Date.UTC(y, m - 1 + i, d));
     const due = date.toISOString().slice(0, 10);

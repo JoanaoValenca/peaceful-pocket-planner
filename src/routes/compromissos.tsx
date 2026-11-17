@@ -120,7 +120,7 @@ function FixedTab() {
   );
 }
 
-function PayDialog({ title, amount, potId, open, onClose, onConfirm }: { title?: string; amount?: number; potId?: string; open: boolean; onClose: () => void; onConfirm: () => void }) {
+function PayDialog({ title, amount, potId, open, onClose, onConfirm }: { title?: string | undefined; amount?: number | undefined; potId?: string | undefined; open: boolean; onClose: () => void; onConfirm: () => void }) {
   const { accounts, pots } = useFinance();
   const [v, setV] = useState(""); const [acc, setAcc] = useState(""); const [date, setDate] = useState(todayISO()); const [pot, setPot] = useState("");
   const [wasOpen, setWasOpen] = useState(false);
@@ -197,7 +197,7 @@ function InstallmentsTab() {
             return (
               <button key={i.id} onClick={() => setOpenId(i.id)} className={cn("flex flex-col rounded-2xl border bg-card p-5 text-left transition-all hover:-translate-y-0.5 hover:shadow-sm", i.cancelled && "opacity-55")}>
                 <div className="flex w-full items-start justify-between gap-2"><div><p className="text-sm font-semibold">{i.description}</p><p className="text-xs text-muted-foreground">Comprado em {formatDate(i.purchaseDate)}</p></div>{i.cancelled ? <StatusBadge status="cancelada" /> : <NatureBadge nature={i.nature} />}</div>
-                <div className="mt-5 flex w-full items-end justify-between"><div><p className="text-xs text-muted-foreground">Parcela</p><p className="font-display text-2xl tabular">{formatBRL(i.installments[0].amount)}</p></div><p className="text-xs tabular text-muted-foreground">Total {formatBRL(i.total)}</p></div>
+                <div className="mt-5 flex w-full items-end justify-between"><div><p className="text-xs text-muted-foreground">Parcela</p><p className="font-display text-2xl tabular">{formatBRL(i.installments[0]?.amount ?? 0)}</p></div><p className="text-xs tabular text-muted-foreground">Total {formatBRL(i.total)}</p></div>
                 <Bar value={paid} max={i.count} className="mt-4 h-2" />
                 <div className="mt-2 flex w-full justify-between text-xs text-muted-foreground"><span>{paid} de {i.count} pagas · {i.count - paid} pendentes</span>{next && !i.cancelled && <span className={next.status === "atrasada" ? "text-destructive" : ""}>Próx. {formatDate(next.due)}</span>}</div>
               </button>
@@ -222,7 +222,7 @@ function InstallmentSheet({ purchase: p, onClose, onChange }: { purchase: Instal
   return (
     <Sheet open onOpenChange={(o) => !o && onClose()}>
       <SheetContent className="w-full overflow-y-auto sm:max-w-md">
-        <SheetHeader><SheetTitle className="font-display text-2xl font-medium">{p.description}</SheetTitle><SheetDescription>{p.count}x de {formatBRL(p.installments[0].amount)} · total {formatBRL(p.total)}</SheetDescription></SheetHeader>
+        <SheetHeader><SheetTitle className="font-display text-2xl font-medium">{p.description}</SheetTitle><SheetDescription>{p.count}x de {formatBRL(p.installments[0]?.amount ?? 0)} · total {formatBRL(p.total)}</SheetDescription></SheetHeader>
         <dl className="mt-5 grid grid-cols-2 gap-3 rounded-2xl bg-muted p-4 text-sm">
           <div><dt className="text-xs text-muted-foreground">Data da compra</dt><dd className="tabular">{formatDate(p.purchaseDate)}</dd></div>
           <div><dt className="text-xs text-muted-foreground">1º vencimento</dt><dd className="tabular">{formatDate(p.firstDue)}</dd></div>
@@ -230,7 +230,7 @@ function InstallmentSheet({ purchase: p, onClose, onChange }: { purchase: Instal
           <div><dt className="text-xs text-muted-foreground">Saldo devedor</dt><dd className="tabular">{formatBRL(pendingSum)}</dd></div>
         </dl>
         {!p.cancelled && pending.length > 0 && <div className="mt-4 grid grid-cols-3 gap-2">
-          <Button variant="outline" size="sm" onClick={() => { setNewAmount(pending[0].amount.toFixed(2).replace(".", ",")); setEditFuture(true); }}><Pencil className="h-3.5 w-3.5" />Editar</Button>
+          <Button variant="outline" size="sm" onClick={() => { setNewAmount(pending[0]!.amount.toFixed(2).replace(".", ",")); setEditFuture(true); }}><Pencil className="h-3.5 w-3.5" />Editar</Button>
           <Button variant="outline" size="sm" onClick={() => setConfirm("antecipar")}><FastForward className="h-3.5 w-3.5" />Quitar</Button>
           <Button variant="outline" size="sm" className="text-destructive" onClick={() => setConfirm("cancelar")}><Ban className="h-3.5 w-3.5" />Cancelar</Button>
         </div>}
@@ -287,7 +287,7 @@ function NewInstallmentDialog({ open, onClose, onSave }: { open: boolean; onClos
         </div>
         <DialogFooter className="gap-2"><Button variant="ghost" onClick={onClose}>Cancelar</Button><Button onClick={() => {
           if (!f.description.trim() || !each) { toast.error("Preencha descrição, valor e parcelas."); return; }
-          const [y, m, d] = f.firstDue.split("-").map(Number);
+          const [y = 2026, m = 1, d = 1] = f.firstDue.split("-").map(Number);
           onSave({ id: `ins-${Date.now()}`, description: f.description, total, count, purchaseDate: f.purchaseDate, firstDue: f.firstDue, nature: f.nature,
             installments: Array.from({ length: count }, (_, i) => ({ n: i + 1, amount: Math.round(each * 100) / 100, due: new Date(Date.UTC(y, m - 1 + i, d)).toISOString().slice(0, 10), status: "pendente" as const })) });
         }}>Cadastrar</Button></DialogFooter>

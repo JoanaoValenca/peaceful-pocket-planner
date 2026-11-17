@@ -45,8 +45,8 @@ export function PotFormDialog({ open, pot, onClose }: { open: boolean; pot: Pot 
   }
   const save = () => {
     const budget = parseBRL(f.budget);
-    if (!f.name.trim()) return toast.error("Dê um nome ao pote.");
-    if (!budget || budget <= 0) return toast.error("Informe um orçamento planejado.");
+    if (!f.name.trim()) { toast.error("Dê um nome ao pote."); return; }
+    if (!budget || budget <= 0) { toast.error("Informe um orçamento planejado."); return; }
     setPots((ps) => pot ? ps.map((p) => p.id === pot.id ? { ...p, ...f, budget } : p) : [...ps, { id: `pot-${Date.now()}`, ...f, budget, reserved: 0, spent: 0 }]);
     toast.success(pot ? "Pote atualizado" : "Pote criado");
     onClose();

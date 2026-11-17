@@ -22,7 +22,7 @@ function Dashboard() {
   const s = useSummary();
   const { pots, fixedExpenses, installments } = useFinance();
   const qa = useQuickActions();
-  const current = monthlyHistory[monthlyHistory.length - 1];
+  const current = monthlyHistory[monthlyHistory.length - 1]!;
 
   // Composition of the total balance — each real is shown exactly once.
   const parts = [
