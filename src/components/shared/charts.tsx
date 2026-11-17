@@ -24,7 +24,7 @@ export function BarsChart({ data, xKey, series, height = 240, stacked }: { data:
         <XAxis dataKey={xKey} {...axis} />
         <YAxis {...axis} tickFormatter={compact} width={40} />
         <Tooltip content={<ChartTooltip />} cursor={{ fill: "var(--muted)" }} />
-        {series.map((s, i) => <Bar key={s.key} dataKey={s.key} name={s.name} fill={s.color} stackId={stacked ? "a" : undefined} radius={stacked ? (i === series.length - 1 ? [6, 6, 0, 0] : 0) : [6, 6, 0, 0]} maxBarSize={28} animationDuration={700} />)}
+        {series.map((s, i) => <Bar key={s.key} dataKey={s.key} name={s.name} fill={s.color} {...(stacked ? { stackId: "a" } : {})} radius={stacked ? (i === series.length - 1 ? [6, 6, 0, 0] : 0) : [6, 6, 0, 0]} maxBarSize={28} animationDuration={700} />)}
       </BarChart>
     </ResponsiveContainer>
   );

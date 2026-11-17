@@ -110,7 +110,7 @@ function FixedTab() {
             <SheetHeader><SheetTitle className="font-display text-2xl font-medium">{hist.name}</SheetTitle><SheetDescription>{formatBRL(hist.amount)} · {FREQ[hist.frequency]} · {accounts[0] && "ocorrências"}</SheetDescription></SheetHeader>
             <ul className="mt-6 space-y-1">
               {[["2026-12", "pendente"], ["2026-11", hist.status], ["2026-10", "paga"], ["2026-09", "paga"], ["2026-08", "paga"]].map(([m, st]) => (
-                <li key={m} className="flex items-center justify-between rounded-xl px-3 py-2.5 hover:bg-muted"><span className="text-sm tabular">{formatDate(`${m}-${hist.nextDue.slice(8, 10)}`)}</span><span className="flex items-center gap-3"><StatusBadge status={st} /><span className="text-sm tabular">{formatBRL(hist.amount)}</span></span></li>
+                <li key={m} className="flex items-center justify-between rounded-xl px-3 py-2.5 hover:bg-muted"><span className="text-sm tabular">{formatDate(`${m}-${hist.nextDue.slice(8, 10)}`)}</span><span className="flex items-center gap-3"><StatusBadge status={st ?? ""} /><span className="text-sm tabular">{formatBRL(hist.amount)}</span></span></li>
               ))}
             </ul>
           </>}
