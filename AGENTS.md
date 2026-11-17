@@ -28,3 +28,8 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+## Project rules
+- Prototype stage: all data lives in `src/data/mock.ts` and is served through the in-memory `FinanceProvider` (`src/store/finance-store.tsx`); screens never import mock data directly except charts history — swap the provider for real data later without touching components.
+- No backend, auth, or definitive financial rules in this stage; derived numbers (`useSummary`, `src/data/planning.ts`) are demonstrative placeholders.
+- Reusable visual pieces live in `src/components/shared`, dialogs in `src/components/dialogs`, pages in `src/routes`.
