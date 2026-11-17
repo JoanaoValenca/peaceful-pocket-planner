@@ -13,6 +13,8 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as CompromissosRouteImport } from './routes/compromissos'
 import { Route as ContasRouteImport } from './routes/contas'
 import { Route as MovimentacoesRouteImport } from './routes/movimentacoes'
+import { Route as PlanejamentoRouteImport } from './routes/planejamento'
+import { Route as RelatoriosRouteImport } from './routes/relatorios'
 import { Route as ReservasRouteImport } from './routes/reservas'
 import { Route as PotesIndexRouteImport } from './routes/potes.index'
 import { Route as PotesPotIdRouteImport } from './routes/potes.$potId'
@@ -37,6 +39,16 @@ const MovimentacoesRoute = MovimentacoesRouteImport.update({
   path: '/movimentacoes',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PlanejamentoRoute = PlanejamentoRouteImport.update({
+  id: '/planejamento',
+  path: '/planejamento',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RelatoriosRoute = RelatoriosRouteImport.update({
+  id: '/relatorios',
+  path: '/relatorios',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ReservasRoute = ReservasRouteImport.update({
   id: '/reservas',
   path: '/reservas',
@@ -58,6 +70,8 @@ export interface FileRoutesByFullPath {
   '/compromissos': typeof CompromissosRoute
   '/contas': typeof ContasRoute
   '/movimentacoes': typeof MovimentacoesRoute
+  '/planejamento': typeof PlanejamentoRoute
+  '/relatorios': typeof RelatoriosRoute
   '/reservas': typeof ReservasRoute
   '/potes/$potId': typeof PotesPotIdRoute
   '/potes/': typeof PotesIndexRoute
@@ -67,6 +81,8 @@ export interface FileRoutesByTo {
   '/compromissos': typeof CompromissosRoute
   '/contas': typeof ContasRoute
   '/movimentacoes': typeof MovimentacoesRoute
+  '/planejamento': typeof PlanejamentoRoute
+  '/relatorios': typeof RelatoriosRoute
   '/reservas': typeof ReservasRoute
   '/potes/$potId': typeof PotesPotIdRoute
   '/potes': typeof PotesIndexRoute
@@ -77,6 +93,8 @@ export interface FileRoutesById {
   '/compromissos': typeof CompromissosRoute
   '/contas': typeof ContasRoute
   '/movimentacoes': typeof MovimentacoesRoute
+  '/planejamento': typeof PlanejamentoRoute
+  '/relatorios': typeof RelatoriosRoute
   '/reservas': typeof ReservasRoute
   '/potes/$potId': typeof PotesPotIdRoute
   '/potes/': typeof PotesIndexRoute
@@ -88,6 +106,8 @@ export interface FileRouteTypes {
     | '/compromissos'
     | '/contas'
     | '/movimentacoes'
+    | '/planejamento'
+    | '/relatorios'
     | '/reservas'
     | '/potes/$potId'
     | '/potes/'
@@ -97,6 +117,8 @@ export interface FileRouteTypes {
     | '/compromissos'
     | '/contas'
     | '/movimentacoes'
+    | '/planejamento'
+    | '/relatorios'
     | '/reservas'
     | '/potes/$potId'
     | '/potes'
@@ -106,6 +128,8 @@ export interface FileRouteTypes {
     | '/compromissos'
     | '/contas'
     | '/movimentacoes'
+    | '/planejamento'
+    | '/relatorios'
     | '/reservas'
     | '/potes/$potId'
     | '/potes/'
@@ -116,6 +140,8 @@ export interface RootRouteChildren {
   CompromissosRoute: typeof CompromissosRoute
   ContasRoute: typeof ContasRoute
   MovimentacoesRoute: typeof MovimentacoesRoute
+  PlanejamentoRoute: typeof PlanejamentoRoute
+  RelatoriosRoute: typeof RelatoriosRoute
   ReservasRoute: typeof ReservasRoute
   PotesPotIdRoute: typeof PotesPotIdRoute
   PotesIndexRoute: typeof PotesIndexRoute
@@ -151,6 +177,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MovimentacoesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/planejamento': {
+      id: '/planejamento'
+      path: '/planejamento'
+      fullPath: '/planejamento'
+      preLoaderRoute: typeof PlanejamentoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/relatorios': {
+      id: '/relatorios'
+      path: '/relatorios'
+      fullPath: '/relatorios'
+      preLoaderRoute: typeof RelatoriosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/reservas': {
       id: '/reservas'
       path: '/reservas'
@@ -180,6 +220,8 @@ const rootRouteChildren: RootRouteChildren = {
   CompromissosRoute: CompromissosRoute,
   ContasRoute: ContasRoute,
   MovimentacoesRoute: MovimentacoesRoute,
+  PlanejamentoRoute: PlanejamentoRoute,
+  RelatoriosRoute: RelatoriosRoute,
   ReservasRoute: ReservasRoute,
   PotesPotIdRoute: PotesPotIdRoute,
   PotesIndexRoute: PotesIndexRoute,
