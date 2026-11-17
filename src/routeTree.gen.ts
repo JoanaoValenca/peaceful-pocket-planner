@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CompromissosRouteImport } from './routes/compromissos'
 import { Route as ContasRouteImport } from './routes/contas'
 import { Route as MovimentacoesRouteImport } from './routes/movimentacoes'
 import { Route as ReservasRouteImport } from './routes/reservas'
@@ -19,6 +20,11 @@ import { Route as PotesPotIdRouteImport } from './routes/potes.$potId'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CompromissosRoute = CompromissosRouteImport.update({
+  id: '/compromissos',
+  path: '/compromissos',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContasRoute = ContasRouteImport.update({
@@ -49,6 +55,7 @@ const PotesPotIdRoute = PotesPotIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/compromissos': typeof CompromissosRoute
   '/contas': typeof ContasRoute
   '/movimentacoes': typeof MovimentacoesRoute
   '/reservas': typeof ReservasRoute
@@ -57,6 +64,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/compromissos': typeof CompromissosRoute
   '/contas': typeof ContasRoute
   '/movimentacoes': typeof MovimentacoesRoute
   '/reservas': typeof ReservasRoute
@@ -66,6 +74,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/compromissos': typeof CompromissosRoute
   '/contas': typeof ContasRoute
   '/movimentacoes': typeof MovimentacoesRoute
   '/reservas': typeof ReservasRoute
@@ -76,6 +85,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/compromissos'
     | '/contas'
     | '/movimentacoes'
     | '/reservas'
@@ -84,6 +94,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/compromissos'
     | '/contas'
     | '/movimentacoes'
     | '/reservas'
@@ -92,6 +103,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/compromissos'
     | '/contas'
     | '/movimentacoes'
     | '/reservas'
@@ -101,6 +113,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CompromissosRoute: typeof CompromissosRoute
   ContasRoute: typeof ContasRoute
   MovimentacoesRoute: typeof MovimentacoesRoute
   ReservasRoute: typeof ReservasRoute
@@ -115,6 +128,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/compromissos': {
+      id: '/compromissos'
+      path: '/compromissos'
+      fullPath: '/compromissos'
+      preLoaderRoute: typeof CompromissosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contas': {
@@ -157,6 +177,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CompromissosRoute: CompromissosRoute,
   ContasRoute: ContasRoute,
   MovimentacoesRoute: MovimentacoesRoute,
   ReservasRoute: ReservasRoute,
