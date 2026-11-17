@@ -11,6 +11,8 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ContasRouteImport } from './routes/contas'
+import { Route as MovimentacoesRouteImport } from './routes/movimentacoes'
+import { Route as ReservasRouteImport } from './routes/reservas'
 import { Route as PotesIndexRouteImport } from './routes/potes.index'
 import { Route as PotesPotIdRouteImport } from './routes/potes.$potId'
 
@@ -22,6 +24,16 @@ const IndexRoute = IndexRouteImport.update({
 const ContasRoute = ContasRouteImport.update({
   id: '/contas',
   path: '/contas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MovimentacoesRoute = MovimentacoesRouteImport.update({
+  id: '/movimentacoes',
+  path: '/movimentacoes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReservasRoute = ReservasRouteImport.update({
+  id: '/reservas',
+  path: '/reservas',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PotesIndexRoute = PotesIndexRouteImport.update({
@@ -38,12 +50,16 @@ const PotesPotIdRoute = PotesPotIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/contas': typeof ContasRoute
+  '/movimentacoes': typeof MovimentacoesRoute
+  '/reservas': typeof ReservasRoute
   '/potes/$potId': typeof PotesPotIdRoute
   '/potes/': typeof PotesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/contas': typeof ContasRoute
+  '/movimentacoes': typeof MovimentacoesRoute
+  '/reservas': typeof ReservasRoute
   '/potes/$potId': typeof PotesPotIdRoute
   '/potes': typeof PotesIndexRoute
 }
@@ -51,20 +67,43 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/contas': typeof ContasRoute
+  '/movimentacoes': typeof MovimentacoesRoute
+  '/reservas': typeof ReservasRoute
   '/potes/$potId': typeof PotesPotIdRoute
   '/potes/': typeof PotesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/contas' | '/potes/$potId' | '/potes/'
+  fullPaths:
+    | '/'
+    | '/contas'
+    | '/movimentacoes'
+    | '/reservas'
+    | '/potes/$potId'
+    | '/potes/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/contas' | '/potes/$potId' | '/potes'
-  id: '__root__' | '/' | '/contas' | '/potes/$potId' | '/potes/'
+  to:
+    | '/'
+    | '/contas'
+    | '/movimentacoes'
+    | '/reservas'
+    | '/potes/$potId'
+    | '/potes'
+  id:
+    | '__root__'
+    | '/'
+    | '/contas'
+    | '/movimentacoes'
+    | '/reservas'
+    | '/potes/$potId'
+    | '/potes/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ContasRoute: typeof ContasRoute
+  MovimentacoesRoute: typeof MovimentacoesRoute
+  ReservasRoute: typeof ReservasRoute
   PotesPotIdRoute: typeof PotesPotIdRoute
   PotesIndexRoute: typeof PotesIndexRoute
 }
@@ -83,6 +122,20 @@ declare module '@tanstack/react-router' {
       path: '/contas'
       fullPath: '/contas'
       preLoaderRoute: typeof ContasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/movimentacoes': {
+      id: '/movimentacoes'
+      path: '/movimentacoes'
+      fullPath: '/movimentacoes'
+      preLoaderRoute: typeof MovimentacoesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reservas': {
+      id: '/reservas'
+      path: '/reservas'
+      fullPath: '/reservas'
+      preLoaderRoute: typeof ReservasRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/potes/': {
@@ -105,6 +158,8 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ContasRoute: ContasRoute,
+  MovimentacoesRoute: MovimentacoesRoute,
+  ReservasRoute: ReservasRoute,
   PotesPotIdRoute: PotesPotIdRoute,
   PotesIndexRoute: PotesIndexRoute,
 }
