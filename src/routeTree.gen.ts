@@ -11,6 +11,8 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ContasRouteImport } from './routes/contas'
+import { Route as PotesIndexRouteImport } from './routes/potes.index'
+import { Route as PotesPotIdRouteImport } from './routes/potes.$potId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -22,31 +24,49 @@ const ContasRoute = ContasRouteImport.update({
   path: '/contas',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PotesIndexRoute = PotesIndexRouteImport.update({
+  id: '/potes/',
+  path: '/potes/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PotesPotIdRoute = PotesPotIdRouteImport.update({
+  id: '/potes/$potId',
+  path: '/potes/$potId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/contas': typeof ContasRoute
+  '/potes/$potId': typeof PotesPotIdRoute
+  '/potes/': typeof PotesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/contas': typeof ContasRoute
+  '/potes/$potId': typeof PotesPotIdRoute
+  '/potes': typeof PotesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/contas': typeof ContasRoute
+  '/potes/$potId': typeof PotesPotIdRoute
+  '/potes/': typeof PotesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/contas'
+  fullPaths: '/' | '/contas' | '/potes/$potId' | '/potes/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/contas'
-  id: '__root__' | '/' | '/contas'
+  to: '/' | '/contas' | '/potes/$potId' | '/potes'
+  id: '__root__' | '/' | '/contas' | '/potes/$potId' | '/potes/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ContasRoute: typeof ContasRoute
+  PotesPotIdRoute: typeof PotesPotIdRoute
+  PotesIndexRoute: typeof PotesIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -65,12 +85,28 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContasRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/potes/': {
+      id: '/potes/'
+      path: '/potes'
+      fullPath: '/potes/'
+      preLoaderRoute: typeof PotesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/potes/$potId': {
+      id: '/potes/$potId'
+      path: '/potes/$potId'
+      fullPath: '/potes/$potId'
+      preLoaderRoute: typeof PotesPotIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ContasRoute: ContasRoute,
+  PotesPotIdRoute: PotesPotIdRoute,
+  PotesIndexRoute: PotesIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
