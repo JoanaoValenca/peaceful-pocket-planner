@@ -18,8 +18,8 @@ export const RULE_LABEL: Record<LeftoverRule, { title: string; desc: string }> =
   manual: { title: "Decidir no encerramento", desc: "Você escolhe o destino ao fechar o período." },
 };
 export const PERIOD_LABEL: Record<Periodicity, string> = { mensal: "Mensal", quinzenal: "Quinzenal", semanal: "Semanal" };
-const ICONS = ["UtensilsCrossed", "Car", "Ticket", "HeartPulse", "Sparkles", "Home", "Repeat", "GraduationCap", "Dog", "Gift", "Shirt", "Plane"];
-const COLORS = ["oklch(0.6 0.09 140)", "oklch(0.6 0.06 230)", "oklch(0.68 0.1 50)", "oklch(0.6 0.1 20)", "oklch(0.65 0.08 330)", "oklch(0.55 0.05 80)", "oklch(0.5 0.06 280)", "oklch(0.55 0.08 190)"];
+const ICONS: string[] = ["UtensilsCrossed", "Car", "Ticket", "HeartPulse", "Sparkles", "Home", "Repeat", "GraduationCap", "Dog", "Gift", "Shirt", "Plane"];
+const COLORS: string[] = ["oklch(0.6 0.09 140)", "oklch(0.6 0.06 230)", "oklch(0.68 0.1 50)", "oklch(0.6 0.1 20)", "oklch(0.65 0.08 330)", "oklch(0.55 0.05 80)", "oklch(0.5 0.06 280)", "oklch(0.55 0.08 190)"];
 
 export function RulePicker({ value, onChange }: { value: LeftoverRule; onChange: (r: LeftoverRule) => void }) {
   return (
@@ -36,12 +36,12 @@ export function RulePicker({ value, onChange }: { value: LeftoverRule; onChange:
 
 export function PotFormDialog({ open, pot, onClose }: { open: boolean; pot: Pot | null; onClose: () => void }) {
   const { setPots } = useFinance();
-  const [f, setF] = useState({ name: "", icon: ICONS[0], color: COLORS[0], budget: "", periodicity: "mensal" as Periodicity, leftoverRule: "acumular" as LeftoverRule });
+  const [f, setF] = useState({ name: "", icon: ICONS[0]!, color: COLORS[0]!, budget: "", periodicity: "mensal" as Periodicity, leftoverRule: "acumular" as LeftoverRule });
   const [lastKey, setLastKey] = useState<string | null>(null);
   const key = open ? pot?.id ?? "new" : null;
   if (key !== lastKey) {
     setLastKey(key);
-    if (open) setF(pot ? { name: pot.name, icon: pot.icon, color: pot.color, budget: pot.budget.toFixed(2).replace(".", ","), periodicity: pot.periodicity, leftoverRule: pot.leftoverRule } : { name: "", icon: ICONS[0], color: COLORS[0], budget: "", periodicity: "mensal", leftoverRule: "acumular" });
+    if (open) setF(pot ? { name: pot.name, icon: pot.icon, color: pot.color, budget: pot.budget.toFixed(2).replace(".", ","), periodicity: pot.periodicity, leftoverRule: pot.leftoverRule } : { name: "", icon: ICONS[0]!, color: COLORS[0]!, budget: "", periodicity: "mensal", leftoverRule: "acumular" });
   }
   const save = () => {
     const budget = parseBRL(f.budget);

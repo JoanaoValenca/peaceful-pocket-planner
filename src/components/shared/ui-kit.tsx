@@ -20,7 +20,7 @@ export function PageHeader({ title, description, actions }: { title: string; des
   );
 }
 
-export function Panel({ title, description, action, children, className }: { title?: string; description?: string; action?: ReactNode; children: ReactNode; className?: string }) {
+export function Panel({ title, description, action, children, className }: { title?: string | undefined; description?: string | undefined; action?: ReactNode; children: ReactNode; className?: string | undefined }) {
   return (
     <section className={cn("rounded-2xl border bg-card p-5 md:p-6", className)}>
       {(title || action) && (
@@ -60,7 +60,7 @@ export function Money({ value, className, signed }: { value: number; className?:
 }
 
 export function StatCard({ label, value, hint, info, tone = "default", icon, footer }: {
-  label: string; value: number; hint?: ReactNode; info?: string; icon?: ReactNode; footer?: ReactNode;
+  label: string; value: number; hint?: ReactNode; info?: string | undefined; icon?: ReactNode; footer?: ReactNode;
   tone?: "default" | "primary" | "sand" | "warning";
 }) {
   const tones = {
@@ -118,7 +118,7 @@ export function StatusBadge({ status }: { status: string }) {
   return <span className={cn("inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium", statusStyles[status])}>{statusLabels[status] ?? status}</span>;
 }
 
-export function NatureBadge({ nature }: { nature?: Nature }) {
+export function NatureBadge({ nature }: { nature?: Nature | undefined }) {
   if (!nature) return null;
   return (
     <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground">
@@ -138,7 +138,7 @@ export function PotIcon({ icon, color, size = "md" }: { icon: string; color: str
   );
 }
 
-export function Field({ label, children, hint, error }: { label: string; children: ReactNode; hint?: string; error?: string }) {
+export function Field({ label, children, hint, error }: { label: string; children: ReactNode; hint?: string | undefined; error?: string | undefined }) {
   return (
     <div className="space-y-1.5">
       <Label className="text-xs font-medium text-muted-foreground">{label}</Label>

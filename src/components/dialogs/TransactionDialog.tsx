@@ -31,7 +31,7 @@ export function TransactionDialog({ open, onOpenChange, initialType = "despesa" 
   const [category, setCategory] = useState("");
   const [nature, setNature] = useState<Nature | "">("");
   const [note, setNote] = useState("");
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [errors, setErrors] = useState<Partial<Record<"amount" | "desc" | "account" | "toAccount" | "nature" | "pot" | "toPot" | "reserve", string>>>({});
 
   useEffect(() => {
     if (open) { setType(initialType); setDesc(""); setAmount(""); setDate(todayISO()); setAccountId(""); setToAccountId(""); setPotId(""); setToPotId(""); setReserveId(""); setCategory(""); setNature(""); setNote(""); setErrors({}); }
@@ -42,7 +42,7 @@ export function TransactionDialog({ open, onOpenChange, initialType = "despesa" 
   const needsDesc = ["receita", "despesa", "ajuste"].includes(type);
 
   const submit = () => {
-    const e: Record<string, string> = {};
+    const e: Partial<Record<"amount" | "desc" | "account" | "toAccount" | "nature" | "pot" | "toPot" | "reserve", string>> = {};
     const v = parseBRL(amount);
     if (!v || v <= 0) e.amount = "Informe um valor maior que zero.";
     if (needsDesc && !desc.trim()) e.desc = "Informe uma descrição.";
@@ -63,7 +63,7 @@ export function TransactionDialog({ open, onOpenChange, initialType = "despesa" 
     onOpenChange(false);
   };
 
-  const AccountSelect = ({ value, onChange, label, error }: { value: string; onChange: (v: string) => void; label: string; error?: string }) => (
+  const AccountSelect = ({ value, onChange, label, error }: { value: string; onChange: (v: string) => void; label: string; error?: string | undefined }) => (
     <Field label={label} error={error}>
       <Select value={value} onValueChange={onChange}>
         <SelectTrigger className={cn(error && "border-destructive")}><SelectValue placeholder="Selecione" /></SelectTrigger>
@@ -71,7 +71,7 @@ export function TransactionDialog({ open, onOpenChange, initialType = "despesa" 
       </Select>
     </Field>
   );
-  const PotSelect = ({ value, onChange, label, error, optional }: { value: string; onChange: (v: string) => void; label: string; error?: string; optional?: boolean }) => (
+  const PotSelect = ({ value, onChange, label, error, optional }: { value: string; onChange: (v: string) => void; label: string; error?: string | undefined; optional?: boolean }) => (
     <Field label={label} error={error}>
       <Select value={value} onValueChange={onChange}>
         <SelectTrigger className={cn(error && "border-destructive")}><SelectValue placeholder={optional ? "Opcional" : "Selecione"} /></SelectTrigger>
