@@ -34,14 +34,14 @@ function UsersPage() {
 
   const changeRole = (id: string, role: UserRole) => {
     const u = users.find((x) => x.id === id)!;
-    if (u.role === "admin" && role !== "admin" && admins <= 1) return toast.error("É preciso ter pelo menos um administrador ativo.");
+    if (u.role === "admin" && role !== "admin" && admins <= 1) { toast.error("É preciso ter pelo menos um administrador ativo."); return; }
     updateUser(id, { role });
     toast.success(`${u.name} agora é ${ROLE_LABEL[role]}.`);
   };
   const toggleActive = (id: string, active: boolean) => {
     const u = users.find((x) => x.id === id)!;
-    if (!active && u.role === "admin" && admins <= 1) return toast.error("Não é possível desativar o único administrador.");
-    if (!active && id === currentId) return toast.error("Você não pode desativar o próprio acesso.");
+    if (!active && u.role === "admin" && admins <= 1) { toast.error("Não é possível desativar o único administrador."); return; }
+    if (!active && id === currentId) { toast.error("Você não pode desativar o próprio acesso."); return; }
     updateUser(id, { active });
     toast.success(active ? "Acesso reativado." : "Acesso desativado.");
   };
