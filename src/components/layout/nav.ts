@@ -12,7 +12,8 @@ export const NAV_GROUPS = [
     { to: "/compromissos", label: "Despesas e compromissos", icon: CalendarClock },
     { to: "/planejamento", label: "Planejamento mensal", icon: CalendarRange },
   ] },
-  { label: "Análise", items: [{ to: "/relatorios", label: "Relatórios", icon: BarChart3, Users }] },
+  { label: "Análise", items: [{ to: "/relatorios", label: "Relatórios", icon: BarChart3 }] },
+  { label: "Conta", items: [{ to: "/usuarios", label: "Usuários e acessos", icon: Users }] },
 ] as const;
 
 export type NavPath = (typeof NAV_GROUPS)[number]["items"][number]["to"];
