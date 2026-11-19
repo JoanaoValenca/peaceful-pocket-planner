@@ -1,3 +1,4 @@
+import { useUsers } from "@/store/users-store";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowDownLeft, ArrowUpRight, Shuffle, ArrowRight, CalendarClock } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -19,6 +20,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Dashboard() {
+  const { current: me } = useUsers();
   const s = useSummary();
   const { pots, fixedExpenses, installments } = useFinance();
   const qa = useQuickActions();
@@ -40,7 +42,7 @@ function Dashboard() {
 
   return (
     <>
-      <PageHeader title="Olá, Joana" description="Terça-feira, 17/11/2026 · Aqui está o retrato do seu dinheiro hoje."
+      <PageHeader title={`Olá, ${me.name.split(" ")[0]}`} description="Terça-feira, 17/11/2026 · Aqui está o retrato do seu dinheiro hoje."
         actions={<>
           <Button variant="outline" onClick={() => qa.newTransaction("receita")}><ArrowDownLeft className="h-4 w-4 text-success" />Receita</Button>
           <Button variant="outline" onClick={() => qa.newTransaction("despesa")}><ArrowUpRight className="h-4 w-4 text-destructive" />Despesa</Button>

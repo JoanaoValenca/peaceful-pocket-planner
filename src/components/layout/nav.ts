@@ -1,4 +1,4 @@
-import { LayoutDashboard, Landmark, PiggyBank, ShieldCheck, ArrowLeftRight, CalendarClock, CalendarRange, BarChart3 } from "lucide-react";
+import { LayoutDashboard, Landmark, PiggyBank, ShieldCheck, ArrowLeftRight, CalendarClock, CalendarRange, BarChart3, Users } from "lucide-react";
 
 export const NAV_GROUPS = [
   { label: "Início", items: [{ to: "/", label: "Visão geral", icon: LayoutDashboard }] },
@@ -12,7 +12,7 @@ export const NAV_GROUPS = [
     { to: "/compromissos", label: "Despesas e compromissos", icon: CalendarClock },
     { to: "/planejamento", label: "Planejamento mensal", icon: CalendarRange },
   ] },
-  { label: "Análise", items: [{ to: "/relatorios", label: "Relatórios", icon: BarChart3 }] },
+  { label: "Análise", items: [{ to: "/relatorios", label: "Relatórios", icon: BarChart3, Users }] },
 ] as const;
 
 export type NavPath = (typeof NAV_GROUPS)[number]["items"][number]["to"];

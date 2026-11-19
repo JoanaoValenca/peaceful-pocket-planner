@@ -16,6 +16,7 @@ import { Route as MovimentacoesRouteImport } from './routes/movimentacoes'
 import { Route as PlanejamentoRouteImport } from './routes/planejamento'
 import { Route as RelatoriosRouteImport } from './routes/relatorios'
 import { Route as ReservasRouteImport } from './routes/reservas'
+import { Route as UsuariosRouteImport } from './routes/usuarios'
 import { Route as PotesIndexRouteImport } from './routes/potes.index'
 import { Route as PotesPotIdRouteImport } from './routes/potes.$potId'
 
@@ -54,6 +55,11 @@ const ReservasRoute = ReservasRouteImport.update({
   path: '/reservas',
   getParentRoute: () => rootRouteImport,
 } as any)
+const UsuariosRoute = UsuariosRouteImport.update({
+  id: '/usuarios',
+  path: '/usuarios',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PotesIndexRoute = PotesIndexRouteImport.update({
   id: '/potes/',
   path: '/potes/',
@@ -73,6 +79,7 @@ export interface FileRoutesByFullPath {
   '/planejamento': typeof PlanejamentoRoute
   '/relatorios': typeof RelatoriosRoute
   '/reservas': typeof ReservasRoute
+  '/usuarios': typeof UsuariosRoute
   '/potes/$potId': typeof PotesPotIdRoute
   '/potes/': typeof PotesIndexRoute
 }
@@ -84,6 +91,7 @@ export interface FileRoutesByTo {
   '/planejamento': typeof PlanejamentoRoute
   '/relatorios': typeof RelatoriosRoute
   '/reservas': typeof ReservasRoute
+  '/usuarios': typeof UsuariosRoute
   '/potes/$potId': typeof PotesPotIdRoute
   '/potes': typeof PotesIndexRoute
 }
@@ -96,6 +104,7 @@ export interface FileRoutesById {
   '/planejamento': typeof PlanejamentoRoute
   '/relatorios': typeof RelatoriosRoute
   '/reservas': typeof ReservasRoute
+  '/usuarios': typeof UsuariosRoute
   '/potes/$potId': typeof PotesPotIdRoute
   '/potes/': typeof PotesIndexRoute
 }
@@ -109,6 +118,7 @@ export interface FileRouteTypes {
     | '/planejamento'
     | '/relatorios'
     | '/reservas'
+    | '/usuarios'
     | '/potes/$potId'
     | '/potes/'
   fileRoutesByTo: FileRoutesByTo
@@ -120,6 +130,7 @@ export interface FileRouteTypes {
     | '/planejamento'
     | '/relatorios'
     | '/reservas'
+    | '/usuarios'
     | '/potes/$potId'
     | '/potes'
   id:
@@ -131,6 +142,7 @@ export interface FileRouteTypes {
     | '/planejamento'
     | '/relatorios'
     | '/reservas'
+    | '/usuarios'
     | '/potes/$potId'
     | '/potes/'
   fileRoutesById: FileRoutesById
@@ -143,6 +155,7 @@ export interface RootRouteChildren {
   PlanejamentoRoute: typeof PlanejamentoRoute
   RelatoriosRoute: typeof RelatoriosRoute
   ReservasRoute: typeof ReservasRoute
+  UsuariosRoute: typeof UsuariosRoute
   PotesPotIdRoute: typeof PotesPotIdRoute
   PotesIndexRoute: typeof PotesIndexRoute
 }
@@ -198,6 +211,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ReservasRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/usuarios': {
+      id: '/usuarios'
+      path: '/usuarios'
+      fullPath: '/usuarios'
+      preLoaderRoute: typeof UsuariosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/potes/': {
       id: '/potes/'
       path: '/potes'
@@ -223,6 +243,7 @@ const rootRouteChildren: RootRouteChildren = {
   PlanejamentoRoute: PlanejamentoRoute,
   RelatoriosRoute: RelatoriosRoute,
   ReservasRoute: ReservasRoute,
+  UsuariosRoute: UsuariosRoute,
   PotesPotIdRoute: PotesPotIdRoute,
   PotesIndexRoute: PotesIndexRoute,
 }

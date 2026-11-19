@@ -7,6 +7,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { TransactionDialog } from "@/components/dialogs/TransactionDialog";
 import { DistributeDialog } from "@/components/dialogs/DistributeDialog";
 import { NAV_GROUPS } from "./nav";
+import { useUsers, initials, ROLE_LABEL } from "@/store/users-store";
 import { cn } from "@/lib/utils";
 import type { TxType } from "@/data/types";
 
@@ -80,6 +81,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   const [txType, setTxType] = useState<TxType>("despesa");
   const [distOpen, setDistOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
+  const { current } = useUsers();
   const isActive = useIsActive();
   const path = useRouterState({ select: (s) => s.location.pathname });
 
@@ -103,8 +105,8 @@ export function AppShell({ children }: { children: ReactNode }) {
           </div>
           <div className={cn("flex-1 overflow-y-auto px-3")}><NavList compact={collapsed} /></div>
           <div className={cn("flex items-center gap-3 border-t p-4", collapsed && "flex-col")}>
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-sand text-xs font-semibold text-sand-foreground">JV</div>
-            {!collapsed && <div className="min-w-0 flex-1"><p className="truncate text-sm font-medium">Joana Valença</p><p className="text-[11px] text-muted-foreground">Protótipo</p></div>}
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-sand text-xs font-semibold text-sand-foreground">{initials(current.name)}</div>
+            {!collapsed && <div className="min-w-0 flex-1"><p className="truncate text-sm font-medium">{current.name}</p><p className="text-[11px] text-muted-foreground">{ROLE_LABEL[current.role]}</p></div>}
             <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setCollapsed((c) => !c)} aria-label="Recolher menu">
               {collapsed ? <PanelLeft className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
             </Button>
