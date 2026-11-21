@@ -1,7 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Plus, Trash2, LogIn } from "lucide-react";
+import { Plus, Trash2, LogIn, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { PageHeader, Panel, Field } from "@/components/shared/ui-kit";
-import { useUsers, initials, ROLE_LABEL, type UserRole } from "@/store/users-store";
+import { useUsers, initials } from "@/store/users-store";
 
 export const Route = createFileRoute("/usuarios")({
   head: () => ({ meta: [
@@ -24,23 +24,22 @@ export const Route = createFileRoute("/usuarios")({
 });
 
 function UsersPage() {
-  const { users, current, currentId, setCurrent, addUser, updateUser, removeUser } = useUsers();
-  const isAdmin = current.role === "admin";
-  const admins = users.filter((u) => u.role === "admin" && u.active).length;
+  const { users, currentId, setCurrent, addUser, updateUser, removeUser, canManage } = useUsers();
+  const admins = users.filter((u) => u.isAdmin && u.active).length;
   const [open, setOpen] = useState(false);
-  const [form, setForm] = useState({ name: "", email: "", role: "usuario" as UserRole });
+  const [form, setForm] = useState({ name: "", email: "", isAdmin: false });
   const [err, setErr] = useState<{ name?: string; email?: string }>({});
   const [toRemove, setToRemove] = useState<string | null>(null);
 
-  const changeRole = (id: string, role: UserRole) => {
+  const changeAdmin = (id: string, isAdmin: boolean) => {
     const u = users.find((x) => x.id === id)!;
-    if (u.role === "admin" && role !== "admin" && admins <= 1) { toast.error("É preciso ter pelo menos um administrador ativo."); return; }
-    updateUser(id, { role });
-    toast.success(`${u.name} agora é ${ROLE_LABEL[role]}.`);
+    if (!isAdmin && u.isAdmin && admins <= 1) { toast.error("É preciso ter pelo menos um administrador ativo."); return; }
+    updateUser(id, { isAdmin });
+    toast.success(isAdmin ? `${u.name} agora também é Administrador.` : `${u.name} agora é apenas Usuário.`);
   };
   const toggleActive = (id: string, active: boolean) => {
     const u = users.find((x) => x.id === id)!;
-    if (!active && u.role === "admin" && admins <= 1) { toast.error("Não é possível desativar o único administrador."); return; }
+    if (!active && u.isAdmin && admins <= 1) { toast.error("Não é possível desativar o único administrador."); return; }
     if (!active && id === currentId) { toast.error("Você não pode desativar o próprio acesso."); return; }
     updateUser(id, { active });
     toast.success(active ? "Acesso reativado." : "Acesso desativado.");
@@ -54,23 +53,27 @@ function UsersPage() {
     if (Object.keys(e).length) return;
     addUser({ ...form, name: form.name.trim(), active: true });
     toast.success("Convite enviado (simulação).");
-    setOpen(false); setForm({ name: "", email: "", role: "usuario" });
+    setOpen(false); setForm({ name: "", email: "", isAdmin: false });
   };
+
+  if (!canManage) return (
+    <div className="mx-auto flex max-w-md flex-col items-center gap-4 py-20 text-center">
+      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted"><Lock className="h-5 w-5 text-muted-foreground" /></div>
+      <h1 className="font-display text-2xl">Acesso restrito</h1>
+      <p className="text-sm text-muted-foreground">A gestão de acessos é exclusiva para administradores. Se você também é administrador, troque de perfil no menu lateral.</p>
+      <Button asChild variant="outline"><Link to="/">Voltar à visão geral</Link></Button>
+    </div>
+  );
 
   return (
     <div className="space-y-6">
       <PageHeader title="Usuários e acessos" description="Quem pode entrar no Pote e o que cada pessoa pode fazer."
-        actions={isAdmin && <Button onClick={() => setOpen(true)}><Plus className="h-4 w-4" />Convidar pessoa</Button>} />
+        actions={<Button onClick={() => setOpen(true)}><Plus className="h-4 w-4" />Convidar pessoa</Button>} />
 
-      {!isAdmin && (
-        <div className="rounded-lg border bg-muted/50 p-4 text-sm text-muted-foreground">
-          Você está com perfil de <strong>Usuário</strong>. Apenas administradores podem convidar pessoas ou mudar perfis.
-        </div>
-      )}
 
       <div className="grid gap-4 md:grid-cols-2">
-        <Panel title="Administrador" description="Gerencia usuários, contas, potes e configurações."><p className="text-sm text-muted-foreground">{admins} ativo(s)</p></Panel>
-        <Panel title="Usuário" description="Registra movimentações e acompanha os potes, sem gerenciar acessos."><p className="text-sm text-muted-foreground">{users.filter((u) => u.role === "usuario" && u.active).length} ativo(s)</p></Panel>
+        <Panel title="Administradores" description="Também são usuários, e além disso gerenciam acessos."><p className="text-sm text-muted-foreground">{admins} ativo(s)</p></Panel>
+        <Panel title="Apenas usuários" description="Registram movimentações e acompanham os potes, sem gerenciar acessos."><p className="text-sm text-muted-foreground">{users.filter((u) => !u.isAdmin && u.active).length} ativo(s)</p></Panel>
       </div>
 
       <Panel title="Pessoas com acesso">
@@ -80,19 +83,16 @@ function UsersPage() {
               <div className="flex min-w-0 flex-1 items-center gap-3">
                 <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-sand text-xs font-semibold text-sand-foreground">{initials(u.name)}</div>
                 <div className="min-w-0">
-                  <div className="truncate text-sm font-medium">{u.name} {u.id === currentId && <Badge variant="secondary" className="ml-1">Você</Badge>} {!u.active && <Badge variant="outline" className="ml-1">Inativo</Badge>}</div>
+                  <div className="truncate text-sm font-medium">{u.name} {u.id === currentId && <Badge variant="secondary" className="ml-1">Você</Badge>} {u.isAdmin && <Badge variant="outline" className="ml-1">Admin</Badge>} {!u.active && <Badge variant="outline" className="ml-1">Inativo</Badge>}</div>
                   <p className="truncate text-xs text-muted-foreground">{u.email} · Último acesso: {u.lastAccess}</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <Select value={u.role} onValueChange={(v) => changeRole(u.id, v as UserRole)} disabled={!isAdmin}>
-                  <SelectTrigger className="w-40" aria-label={`Perfil de ${u.name}`}><SelectValue /></SelectTrigger>
-                  <SelectContent><SelectItem value="admin">Administrador</SelectItem><SelectItem value="usuario">Usuário</SelectItem></SelectContent>
-                </Select>
-                <Switch checked={u.active} disabled={!isAdmin} onCheckedChange={(v) => toggleActive(u.id, v)} aria-label={`Acesso de ${u.name}`} />
+                <label className="flex items-center gap-2 text-xs text-muted-foreground"><Switch checked={u.isAdmin} onCheckedChange={(v) => changeAdmin(u.id, v)} aria-label={`${u.name} é administrador`} />Administrador</label>
+                <label className="flex items-center gap-2 text-xs text-muted-foreground"><Switch checked={u.active} onCheckedChange={(v) => toggleActive(u.id, v)} aria-label={`Acesso de ${u.name}`} />Ativo</label>
                 <Button variant="ghost" size="icon" title="Entrar como esta pessoa (simulação)" disabled={!u.active || u.id === currentId}
                   onClick={() => { setCurrent(u.id); toast.success(`Agora você vê o Pote como ${u.name}.`); }}><LogIn className="h-4 w-4" /></Button>
-                <Button variant="ghost" size="icon" title="Remover" disabled={!isAdmin || u.id === currentId} onClick={() => setToRemove(u.id)}><Trash2 className="h-4 w-4" /></Button>
+                <Button variant="ghost" size="icon" title="Remover" disabled={u.id === currentId} onClick={() => setToRemove(u.id)}><Trash2 className="h-4 w-4" /></Button>
               </div>
             </li>
           ))}
@@ -105,12 +105,7 @@ function UsersPage() {
           <div className="space-y-4">
             <Field label="Nome" error={err.name}><Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></Field>
             <Field label="E-mail" error={err.email}><Input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} /></Field>
-            <Field label="Perfil">
-              <Select value={form.role} onValueChange={(v) => setForm({ ...form, role: v as UserRole })}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent><SelectItem value="admin">Administrador</SelectItem><SelectItem value="usuario">Usuário</SelectItem></SelectContent>
-              </Select>
-            </Field>
+            <label className="flex items-center justify-between rounded-lg border p-3 text-sm"><span>Também é administrador<span className="block text-xs text-muted-foreground">Poderá gerenciar acessos.</span></span><Switch checked={form.isAdmin} onCheckedChange={(v) => setForm({ ...form, isAdmin: v })} /></label>
           </div>
           <DialogFooter><Button variant="outline" onClick={() => setOpen(false)}>Cancelar</Button><Button onClick={submit}>Enviar convite</Button></DialogFooter>
         </DialogContent>
@@ -122,7 +117,7 @@ function UsersPage() {
           <DialogFooter><Button variant="outline" onClick={() => setToRemove(null)}>Cancelar</Button>
             <Button variant="destructive" onClick={() => {
               const u = users.find((x) => x.id === toRemove)!;
-              if (u.role === "admin" && admins <= 1) { toast.error("É preciso ter pelo menos um administrador ativo."); return setToRemove(null); }
+              if (u.isAdmin && admins <= 1) { toast.error("É preciso ter pelo menos um administrador ativo."); return setToRemove(null); }
               removeUser(u.id); setToRemove(null); toast.success("Acesso removido.");
             }}>Remover</Button></DialogFooter>
         </DialogContent>

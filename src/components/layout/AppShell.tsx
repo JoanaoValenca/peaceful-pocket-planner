@@ -1,9 +1,9 @@
 import { createContext, useContext, useState, type ReactNode } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Plus, ArrowDownLeft, ArrowUpRight, Shuffle, PanelLeftClose, PanelLeft, Menu, LayoutDashboard, PiggyBank, ArrowLeftRight, Sprout } from "lucide-react";
+import { Plus, ArrowDownLeft, ArrowUpRight, Shuffle, PanelLeftClose, PanelLeft, Menu, ChevronsUpDown, Check, LayoutDashboard, PiggyBank, ArrowLeftRight, Sprout } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { TransactionDialog } from "@/components/dialogs/TransactionDialog";
 import { DistributeDialog } from "@/components/dialogs/DistributeDialog";
 import { NAV_GROUPS } from "./nav";
@@ -35,9 +35,11 @@ function useIsActive() {
 
 function NavList({ compact, onNavigate }: { compact?: boolean; onNavigate?: () => void }) {
   const isActive = useIsActive();
+  const { canManage } = useUsers();
+  const groups = NAV_GROUPS.filter((g) => canManage || g.items.every((it) => it.to !== "/usuarios"));
   return (
     <nav className="space-y-5">
-      {NAV_GROUPS.map((g) => (
+      {groups.map((g) => (
         <div key={g.label}>
           {!compact && <p className="mb-1.5 px-3 text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground/80">{g.label}</p>}
           <div className="space-y-0.5">
@@ -61,6 +63,36 @@ function NavList({ compact, onNavigate }: { compact?: boolean; onNavigate?: () =
   );
 }
 
+function ProfileSwitcher({ compact }: { compact?: boolean }) {
+  const { current, mode, setMode, users, setCurrent } = useUsers();
+  const avatar = <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-sand text-xs font-semibold text-sand-foreground">{initials(current.name)}</div>;
+  const info = <div className="min-w-0 flex-1 text-left"><p className="truncate text-sm font-medium">{current.name}</p><p className="text-[11px] text-muted-foreground">{ROLE_LABEL[mode]}</p></div>;
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button className="flex min-w-0 flex-1 items-center gap-3 rounded-lg p-1 hover:bg-sidebar-accent/60" aria-label="Trocar perfil">
+          {avatar}{!compact && <>{info}<ChevronsUpDown className="h-4 w-4 text-muted-foreground" /></>}
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="start" className="w-60">
+        <DropdownMenuLabel>Usar o Pote como</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        {(current.isAdmin ? (["admin", "usuario"] as const) : (["usuario"] as const)).map((m) => (
+          <DropdownMenuItem key={m} onClick={() => setMode(m)}>
+            <Check className={cn("h-4 w-4", mode !== m && "opacity-0")} />
+            <div><p>{ROLE_LABEL[m]}</p><p className="text-[11px] text-muted-foreground">{m === "admin" ? "Gerencia acessos" : "Uso do dia a dia"}</p></div>
+          </DropdownMenuItem>
+        ))}
+        <DropdownMenuSeparator />
+        <DropdownMenuLabel className="text-[11px] font-normal text-muted-foreground">Trocar de pessoa (simulação)</DropdownMenuLabel>
+        {users.filter((u) => u.active && u.id !== current.id).map((u) => (
+          <DropdownMenuItem key={u.id} onClick={() => setCurrent(u.id)}>{u.name}</DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
 function QuickMenu({ actions, children }: { actions: QuickActions; children: ReactNode }) {
   return (
     <DropdownMenu>
@@ -81,7 +113,6 @@ export function AppShell({ children }: { children: ReactNode }) {
   const [txType, setTxType] = useState<TxType>("despesa");
   const [distOpen, setDistOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
-  const { current } = useUsers();
   const isActive = useIsActive();
   const path = useRouterState({ select: (s) => s.location.pathname });
 
@@ -105,8 +136,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           </div>
           <div className={cn("flex-1 overflow-y-auto px-3")}><NavList compact={collapsed} /></div>
           <div className={cn("flex items-center gap-3 border-t p-4", collapsed && "flex-col")}>
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-sand text-xs font-semibold text-sand-foreground">{initials(current.name)}</div>
-            {!collapsed && <div className="min-w-0 flex-1"><p className="truncate text-sm font-medium">{current.name}</p><p className="text-[11px] text-muted-foreground">{ROLE_LABEL[current.role]}</p></div>}
+            <ProfileSwitcher compact={collapsed} />
             <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setCollapsed((c) => !c)} aria-label="Recolher menu">
               {collapsed ? <PanelLeft className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
             </Button>
@@ -148,6 +178,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           <SheetContent side="left" className="w-72 bg-sidebar p-0">
             <SheetHeader className="p-5"><SheetTitle className="text-left"><Brand /></SheetTitle></SheetHeader>
             <div className="px-3"><NavList onNavigate={() => setMoreOpen(false)} /></div>
+            <div className="mt-6 border-t p-4"><ProfileSwitcher /></div>
           </SheetContent>
         </Sheet>
 

@@ -1,16 +1,19 @@
 import { createContext, useContext, useState, type ReactNode } from "react";
 
 export type UserRole = "admin" | "usuario";
-export interface AppUser { id: string; name: string; email: string; role: UserRole; active: boolean; lastAccess: string; }
+/** Every person is a "usuário"; `isAdmin` additionally lets them manage access. */
+export interface AppUser { id: string; name: string; email: string; isAdmin: boolean; active: boolean; lastAccess: string; }
 
 const INITIAL: AppUser[] = [
-  { id: "u1", name: "Joana Valença", email: "joana@exemplo.com", role: "admin", active: true, lastAccess: "17/11/2026" },
-  { id: "u2", name: "Rafael Valença", email: "rafael@exemplo.com", role: "usuario", active: true, lastAccess: "15/11/2026" },
-  { id: "u3", name: "Lia Moraes", email: "lia@exemplo.com", role: "usuario", active: false, lastAccess: "02/10/2026" },
+  { id: "u1", name: "Joana Valença", email: "joana@exemplo.com", isAdmin: true, active: true, lastAccess: "17/11/2026" },
+  { id: "u2", name: "Rafael Valença", email: "rafael@exemplo.com", isAdmin: false, active: true, lastAccess: "15/11/2026" },
+  { id: "u3", name: "Lia Moraes", email: "lia@exemplo.com", isAdmin: false, active: false, lastAccess: "02/10/2026" },
 ];
 
 interface UsersCtx {
   users: AppUser[]; currentId: string; current: AppUser;
+  /** Profile the current person is using right now. */
+  mode: UserRole; setMode: (m: UserRole) => void; canManage: boolean;
   setCurrent: (id: string) => void;
   addUser: (u: Omit<AppUser, "id" | "lastAccess">) => void;
   updateUser: (id: string, patch: Partial<AppUser>) => void;
@@ -20,10 +23,14 @@ const Ctx = createContext<UsersCtx | null>(null);
 
 export function UsersProvider({ children }: { children: ReactNode }) {
   const [users, setUsers] = useState(INITIAL);
-  const [currentId, setCurrent] = useState("u1");
+  const [currentId, setCurrentId] = useState("u1");
+  const [modeState, setModeState] = useState<UserRole>("admin");
   const current = users.find((u) => u.id === currentId) ?? users[0]!;
+  const mode: UserRole = current.isAdmin ? modeState : "usuario";
   const value: UsersCtx = {
-    users, currentId, current, setCurrent,
+    users, currentId, current, mode, canManage: mode === "admin",
+    setMode: (m) => setModeState(m),
+    setCurrent: (id) => { setCurrentId(id); setModeState(users.find((u) => u.id === id)?.isAdmin ? "admin" : "usuario"); },
     addUser: (u) => setUsers((l) => [...l, { ...u, id: `u${Date.now()}`, lastAccess: "Nunca acessou" }]),
     updateUser: (id, patch) => setUsers((l) => l.map((u) => (u.id === id ? { ...u, ...patch } : u))),
     removeUser: (id) => setUsers((l) => l.filter((u) => u.id !== id)),
